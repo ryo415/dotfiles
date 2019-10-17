@@ -1,4 +1,4 @@
 #!/bin/bash
 
-ln -s ./.vimrc ~/.vimrc
-ln -s ./.bash_profile ~/.bash_profile
+ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
+ln -s $HOME/dotfiles/.bash_profile $HOME/.bash_profile
