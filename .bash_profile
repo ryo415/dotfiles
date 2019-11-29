@@ -1,3 +1,7 @@
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
 # pyenv
 export PYENV_ROOT=/usr/local/var/pyenv
 if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
@@ -10,3 +14,5 @@ eval "$(rbenv init -)"
 # alias
 alias la='ls -a'
 alias ll='ls -l'
+
+export PATH="$HOME/.cargo/bin:$PATH"

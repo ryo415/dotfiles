@@ -4,6 +4,9 @@ set autoindent
 " 行番号を表示
 set nu
 
+" タブを半角2字
+set tabstop=2
+
 "dein Scripts-----------------------------
 if &compatible
   set nocompatible               " Be iMproved
