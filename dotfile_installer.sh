@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 function helpmsg() {
   command echo "Usage: $0 [link | update]" 0>&2
@@ -35,16 +35,16 @@ function main() {
   done
 
   if [[ "$link" = true ]];then
- 	ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
-    ln -s $HOME/dotfiles/.bash_profile $HOME/.bash_profile
-	ln -s $HOME/dotfiles/.vim $HOME/.vim
+ 	  ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
+    ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
+	  ln -s $HOME/dotfiles/.vim $HOME/.vim
   fi
   if [[ "$update" = true ]];then
-	unlink $HOME/.vimrc
-	unlink $HOME/.bash_profile
+	  unlink $HOME/.vimrc
+	  unlink $HOME/.zprofile
     unlink $HOME/.vim
-	ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
-    ln -s $HOME/dotfiles/.bash_profile $HOME/.bash_profile
+ 	  ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
+    ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
     ln -s $HOME/dotfiles/.vim $HOME/.vim
   fi
 }

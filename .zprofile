@@ -1,5 +1,5 @@
 if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
+    . ~/.zshrc
 fi
 
 # alias
