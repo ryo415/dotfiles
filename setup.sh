@@ -10,10 +10,17 @@ elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
     apt install -y $package;
   elif [ -e /etc/redhat-release ]; then
     yum install -y $package;
+  else
+    echo "Your platform is not supported."
+    exit 1 
   fi
 else
   echo "Your platform ($(uname -a)) is not supported."
   exit 1
 fi
 
-echo "package install complete"
+chsh -s /bin/zsh
+./dotfile_installer.sh
+
+echo "package install&setup complete"
+echo "please restart terminal"
