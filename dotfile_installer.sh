@@ -39,19 +39,16 @@ function main() {
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
     ln -s $HOME/dotfiles/.vim $HOME/.vim
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
-    ln -s $HOME/dotfiles/.git-completion.zsh $HOME/.git-completion.zsh
   fi
   if [[ "$update" = true ]];then
     unlink $HOME/.vimrc
     unlink $HOME/.zprofile
     unlink $HOME/.vim
     unlink $HOME/.tmux.conf
-    unlink $HOME/.git-completion.zsh
     ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
     ln -s $HOME/dotfiles/.vim $HOME/.vim
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
-    ln -s $HOME/dotfiles/.git-completion.zsh $HOME/.git-completion.zsh
   fi
 }
 
