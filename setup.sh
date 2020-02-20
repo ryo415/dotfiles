@@ -20,7 +20,7 @@ else
 fi
 
 chsh -s /bin/zsh
-./dotfile_installer.sh
+./dotfile_installer.sh link
 
 echo "package install&setup complete"
 echo "please restart terminal"
