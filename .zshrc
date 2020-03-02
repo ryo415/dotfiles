@@ -5,6 +5,7 @@
 # rbenv
 # export PATH="$HOME/.rbenv/bin:$PATH"
 # eval "$(rbenv init -)"
+# zstyle ':completion:*:default' menu select=2
 
 # 補完
 # fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
