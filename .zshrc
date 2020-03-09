@@ -2,6 +2,9 @@
 # powerline-daemon -q
 # . /usr/local/lib/python3.7/site-packages/powerline/bindings/zsh/powerline.zsh
 
+# starship
+# eval "$(starship init zsh)"
+
 # rbenv
 # export PATH="$HOME/.rbenv/bin:$PATH"
 # eval "$(rbenv init -)"
