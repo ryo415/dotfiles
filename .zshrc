@@ -14,3 +14,6 @@
 # fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 # autoload -U compinit
 # compinit -u
+
+# tmux自動起動
+# [[ -z "$TMUX" && ! -z "$PS1" ]] && tmux
