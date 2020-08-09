@@ -7,6 +7,10 @@ set nu
 " タブを半角2字
 set tabstop=2
 
+" インデントを半角スペース2文字
+set expandtab
+set shiftwidth=2
+
 " begin vim-plug
 call plug#begin('~/.vim/plugged')
 
