@@ -5,7 +5,13 @@ if ! which git 1>/dev/null 2>&1; then
   exit 1
 fi
 
-cd $HOME/dotfiles/opt
+DOTFILES_DIR="$HOME/dotfiles"
+
+if [ ! -d "$DOTFILES_DIR/opt" ]; then
+  mkdir "$DOTFILES_DIR/opt"
+fi
+
+cd $DOTFILES_DIR/opt
 git clone https://github.com/ryanoasis/nerd-fonts.git
 
 cd nerd-fonts
