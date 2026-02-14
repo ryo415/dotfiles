@@ -10,7 +10,8 @@ alias ll='ls -l'
 # eval "$(starship init zsh)"
 
 # rbenv
-# export PATH="$HOME/.rbenv/bin:$PATH"
+# export RBENV_ROOT="/usr/local/lib/rbenv"
+# export PATH="${RBENV_ROOT}/bin:${PATH}"
 # eval "$(rbenv init -)"
 # zstyle ':completion:*:default' menu select=2
 
@@ -28,3 +29,6 @@ alias ll='ls -l'
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# rust
+# . "$HOME/.cargo/env"
