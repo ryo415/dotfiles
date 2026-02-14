@@ -13,6 +13,7 @@ config.color_scheme = 'iTerm2 Default'
 
 config.window_background_opacity = 0.90
 config.window_decorations = "RESIZE"
+config.font = wezterm.font("FiraCode Nerd Font", {weight="Regular", stretch="Normal", style="Normal"})
 
 -- keybinds
 config.keys = require("keybinds").keys
