@@ -37,22 +37,24 @@ function main() {
   if [[ "$link" = true ]];then
     ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
-		ln -s $HOME/dotfiles/.zsh $HOME/.zsh
-    ln -s $HOME/dotfiles/.vim $HOME/.vim
+    ln -s $HOME/dotfiles/.zsh $HOME/.zsh
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
-		cp $HOME/dotfiles/.zshrc $HOME/.zshrc
+    ln -s $HOME/dotfiles/.zshrc $HOME/.zshrc
+    mkdir -p $HOME/.config
+    ln -s $HOME/dotfiles/nvim $HOME/.config/nvim
   fi
   if [[ "$update" = true ]];then
     unlink $HOME/.vimrc
     unlink $HOME/.zprofile
-    unlink $HOME/.vim
     unlink $HOME/.tmux.conf
-		unlink $HOME/.zsh
+    unlink $HOME/.zsh
+    unlink $HOME/.config/nvim
     ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
-    ln -s $HOME/dotfiles/.vim $HOME/.vim
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
-		ln -s $HOME/dotfiles/.zsh $HOME/.zsh
+    ln -s $HOME/dotfiles/.zsh $HOME/.zsh
+    mkdir -p $HOME/.config
+    ln -s $HOME/dotfiles/nvim $HOME/.config/nvim
   fi
 }
 
