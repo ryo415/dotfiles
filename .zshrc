@@ -2,6 +2,14 @@
 alias la='ls -a'
 alias ll='ls -l'
 
+if type nvim > /dev/null 2>&1; then
+  alias vim='nvim'
+fi
+
+if type bat > /dev/null 2>&1; then
+  alias cat='bat'
+fi
+
 # powerline
 # powerline-daemon -q
 # . /usr/local/lib/python3.7/site-packages/powerline/bindings/zsh/powerline.zsh
