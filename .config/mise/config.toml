@@ -1,0 +1,13 @@
+# references: 
+# 	https://mise.jdx.dev/configuration.html#global-config-config-mise-config-toml
+[settings]
+trusted_config_paths = [
+    '~/dotfiles/mise',
+]
+
+[tools]
+java = "latest"
+node = "latest"
+python = "latest"
+ruby = "latest"
+
