@@ -1,4 +1,20 @@
-# alias
+# ============================================
+# ~/.zshrc
+# Interactive shell configuration
+# - Loaded for interactive shells
+# - Aliases / completion / prompt / plugins
+# ============================================
+
+# --------------------------------------------
+# Safety: run only in interactive shells
+# --------------------------------------------
+
+[[ -o interactive ]] || return
+
+# --------------------------------------------
+# Aliases
+# --------------------------------------------
+
 alias la='ls -a'
 alias ll='ls -l'
 
@@ -10,12 +26,21 @@ if type bat > /dev/null 2>&1; then
   alias cat='bat'
 fi
 
-# powerline
-# powerline-daemon -q
-# . /usr/local/lib/python3.7/site-packages/powerline/bindings/zsh/powerline.zsh
+# --------------------------------------------
+# Completion
+# --------------------------------------------
+
+autoload -Uz compinit
+compinit
+
+# --------------------------------------------
+# Prompt
+# --------------------------------------------
 
 # starship
 # eval "$(starship init zsh)"
+
+
 
 # rbenv
 # export RBENV_ROOT="/usr/local/lib/rbenv"
@@ -23,20 +48,8 @@ fi
 # eval "$(rbenv init -)"
 # zstyle ':completion:*:default' menu select=2
 
-# 補完
-# fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
-# autoload -U compinit
-# compinit -u
-
-# neovim
-# if command -v nvim >/dev/null 2>&1; then
-#   alias vim="nvim"
-# fi
-
 # node
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# rust
-# . "$HOME/.cargo/env"
