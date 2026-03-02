@@ -18,7 +18,7 @@ fi
 # Environment Variables
 # --------------------------------------------
 
-export EDITOR="vim"
+# export EDITOR="vim"
 export LANG="ja_JP.UTF-8"
 
 # --------------------------------------------
