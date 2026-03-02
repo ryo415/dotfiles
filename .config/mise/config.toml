@@ -2,7 +2,7 @@
 # 	https://mise.jdx.dev/configuration.html#global-config-config-mise-config-toml
 [settings]
 trusted_config_paths = [
-    '~/dotfiles/mise',
+    '~/dotfiles/mise/config.toml',
 ]
 
 [tools]
