@@ -6,7 +6,7 @@ vim.opt.number = true                   -- 行番号を左端に表示
 vim.opt.ignorecase = true               -- 検索時、大文字小文字を区別しない
 vim.opt.smartcase = true                -- 検索時、大文字がある場合ignorecaseを上書きする(大文字を検索する際は大文字区別する)
 vim.opt.showmode = false                -- 現在のモードを表示しない(表示はlualineに任せる)
-
+vim.opt.cursorline = true               -- 現在の行にハイライトする
 vim.opt.clipboard:append('unnamedplus') -- Neovimのシステムクリップボードを有効化
 
 vim.cmd("filetype plugin indent on")    -- ファイルタイプ検出、プラグイン、インデントを有効化
