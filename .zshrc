@@ -18,12 +18,21 @@
 alias la='ls -a'
 alias ll='ls -l'
 
+# if os is Debian, batcat will be installed instead bat.
+#if type batcat > /dev/null 2>&1; then
+#  alias bat='batcat'
+#fi
+
 if type nvim > /dev/null 2>&1; then
   alias vim='nvim'
 fi
 
 if type bat > /dev/null 2>&1; then
   alias cat='bat'
+fi
+
+if type eza > /dev/null 2>&1; then
+  alias ls='eza'
 fi
 
 # --------------------------------------------
@@ -38,8 +47,8 @@ compinit
 # --------------------------------------------
 
 # starship
-# eval "$(starship init zsh)"
+eval "$(starship init zsh)"
 
 # mise
-# eval "$(mise activate zsh)"
+eval "$(mise activate zsh)"
 
