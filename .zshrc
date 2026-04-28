@@ -35,6 +35,10 @@ if type eza > /dev/null 2>&1; then
   alias ls='eza'
 fi
 
+if type sway > /dev/null 2>&1; then
+  alias sway="WLR_NO_HARDWARE_CURSORS=1 sway"
+fi
+
 # --------------------------------------------
 # Completion
 # --------------------------------------------
