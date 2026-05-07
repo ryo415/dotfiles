@@ -6,6 +6,8 @@ function M.apply_to(config)
 
     config.window_background_opacity = 0.95
     config.window_decorations = "NONE"
+
+    config.front_end = "Software"
 end
 
 return M
