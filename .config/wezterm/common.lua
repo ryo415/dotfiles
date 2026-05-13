@@ -3,7 +3,6 @@ local M = {}
 
 function M.apply_to(config)
     -- This is where you actually apply your config choices.
-    config.enable_tab_bar = false
 
     -- or, changing the font size and color scheme.
     -- color scheme ref: https://wezterm.org/colorschemes/
@@ -13,6 +12,13 @@ function M.apply_to(config)
     config.window_background_opacity = 0.90
     config.window_decorations = "RESIZE"
     config.font = wezterm.font("FiraCode Nerd Font", {weight="Regular", stretch="Normal", style="Normal"})
+
+    config.window_padding = {
+      left = 8,
+      right = 8,
+      top = 8,
+      bottom = 8,
+    }
 
     -- keybinds
     config.keys = require("keybinds").keys
