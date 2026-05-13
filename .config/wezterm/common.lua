@@ -3,6 +3,7 @@ local M = {}
 
 function M.apply_to(config)
     -- This is where you actually apply your config choices.
+    config.enable_tab_bar = false
 
     -- or, changing the font size and color scheme.
     -- color scheme ref: https://wezterm.org/colorschemes/
