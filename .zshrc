@@ -60,3 +60,7 @@ if type mise > /dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
 
+# zellij
+if type zellij >/dev/null 2>&1; then
+  eval "$(zellij setup --generate-auto-start zsh)"
+fi
