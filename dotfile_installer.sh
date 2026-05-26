@@ -41,22 +41,27 @@ function main() {
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
     ln -s $HOME/dotfiles/.zshrc $HOME/.zshrc
     mkdir -p $HOME/.config
-    ln -s $HOME/dotfiles/nvim $HOME/.config/nvim
+    ln -s "$HOME/dotfiles/.config/nvim" "$HOME/.config/nvim"
+    ln -s "$HOME/dotfiles/.config/hypr" "$HOME/.config/hypr"
+    ln -s "$HOME/dotfiles/.config/waybar" "$HOME/.config/waybar"
   fi
   if [[ "$update" = true ]];then
     unlink $HOME/.vimrc
     unlink $HOME/.zprofile
     unlink $HOME/.tmux.conf
     unlink $HOME/.zsh
-    unlink $HOME/.config/nvim
+    unlink "$HOME/.config/nvim"
+    unlink "$HOME/.config/hypr"
+    unlink "$HOME/.config/waybar"
     ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
     ln -s $HOME/dotfiles/.zsh $HOME/.zsh
     mkdir -p $HOME/.config
-    ln -s $HOME/dotfiles/nvim $HOME/.config/nvim
+    ln -s "$HOME/dotfiles/.config/nvim" "$HOME/.config/nvim"
+    ln -s "$HOME/dotfiles/.config/hypr" "$HOME/.config/hypr"
+    ln -s "$HOME/dotfiles/.config/waybar" "$HOME/.config/waybar"
   fi
 }
 
 main "$@"
-
