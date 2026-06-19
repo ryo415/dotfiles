@@ -1,0 +1,12 @@
+[Unit]
+Description=Cliphist Text Watcher
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/sh -c 'wl-paste --type text --watch cliphist store'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
