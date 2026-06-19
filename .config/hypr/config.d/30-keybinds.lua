@@ -12,18 +12,32 @@ local left = "H"
 local down = "J"
 local up = "K"
 local right = "L"
+local resizeStep = 40
 
 ------------------
 -- WINDOW OPS   --
 ------------------
 
 hl.bind(vars.main_mod .. " + Q", hl.dsp.window.close())
-hl.bind(vars.main_mod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
-hl.bind(vars.main_mod .. " + SHIFT + SPACE", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(vars.main_mod .. " + M", hl.dsp.exit())
 hl.bind(vars.main_mod .. " + P", hl.dsp.window.pseudo())
 hl.bind(vars.main_mod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(vars.main_mod .. " + V", hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
--- hl.bind(vars.main_mod .. " + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(vars.main_mod .. " + ALT + L", hl.dsp.exec_cmd("hyprlock"))
+
+-- WINDOW MOVEMENT
+hl.bind(vars.main_mod .. " + SHIFT + " .. left, hl.dsp.window.move({ direction = "left" }))
+hl.bind(vars.main_mod .. " + SHIFT + " .. right, hl.dsp.window.move({ direction = "right" }))
+hl.bind(vars.main_mod .. " + SHIFT + " .. up, hl.dsp.window.move({ direction = "up" }))
+hl.bind(vars.main_mod .. " + SHIFT + " .. down, hl.dsp.window.move({ direction = "down" }))
+hl.bind(vars.main_mod .. " + SHIFT + SPACE", hl.dsp.window.float({ action = "toggle" }))
+
+-- WINDOW RESIZE
+hl.bind(vars.main_mod .. " + CTRL + " .. left, hl.dsp.window.resize({ x = -resizeStep, y = 0, relative = true}))
+hl.bind(vars.main_mod .. " + CTRL + " .. right, hl.dsp.window.resize({ x = resizeStep, y = 0, relative = true }))
+hl.bind(vars.main_mod .. " + CTRL + " .. up, hl.dsp.window.resize({ x = 0, y = resizeStep, relative = true }))
+hl.bind(vars.main_mod .. " + CTRL + " .. down, hl.dsp.window.resize({ x = 0, y = -resizeStep, relative = true }))
+hl.bind(vars.main_mod .. " + SHIFT + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 
 ------------------

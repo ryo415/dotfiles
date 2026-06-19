@@ -16,24 +16,31 @@ hl.monitor({
     scale = 1,
 })
 
+hl.monitor({
+    output = "",
+    mode = "preferred",
+    position = "auto",
+    scale = 1,
+})
+
 ------------------
 -- WORKSPACES   --
 ------------------
 
--- Right monitor: main work area
+-- Left monitor: secondary area for media and games
 for i = 1, 5 do
     hl.workspace_rule({
         workspace = tostring(i),
-        monitor = "HDMI-A-2",
+        monitor = "DP-5",
         default = i == 1,
     })
 end
 
--- Left monitor: secondary area for media and games
+-- Right monitor: main work area
 for i = 6, 10 do
     hl.workspace_rule({
         workspace = tostring(i),
-        monitor = "DP-5",
+        monitor = "HDMI-A-2",
         default = i == 6,
     })
 end

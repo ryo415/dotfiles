@@ -5,8 +5,8 @@
 local vars = {
     terminal = "wezterm",
     file_manager = "dolphin",
-    app_launcher = "wofi --show drun",
-    browser = "firefox",
+    app_launcher = "walker",
+    browser = "chromium",
     main_mod = "SUPER",
 }
 
