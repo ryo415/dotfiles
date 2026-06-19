@@ -1,0 +1,12 @@
+[opener]
+wine = [
+  { run = 'wine "$@"', desc = "Wine", orphan = false, for = "unix" }
+]
+
+[open]
+prepend_rules = [
+  { url = "*.exe", use = "wine" },
+  { url = "*.EXE", use = "wine" },
+  { mime = "application/vnd.microsoft.portable-executable", use = "wine" },
+  { mime = "application/microsoft.portable-executable", use = "wine" },
+]
