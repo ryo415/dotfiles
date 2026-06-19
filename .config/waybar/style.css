@@ -1,18 +1,25 @@
+@import "tokens/colors.css";
+@import "tokens/widget.css";
+@import "tokens/workspace.css";
+
 * {
-  border: none;
   border-radius: 0;
   font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
   font-size: 13px;
-  min-height: 0;
 }
 
 window#waybar {
-  background: rgba(20, 22, 26, 0.92);
-  color: #d8dee9;
+  background: transparent;
+}
+/*
+#workspaces {
+  padding: 0 4px;
 }
 
 #workspaces button {
   color: #8f98a8;
+  min-width: 28px;
+  min-height: 24px;
   padding: 0 10px;
 }
 
@@ -25,21 +32,5 @@ window#waybar {
   color: #ffffff;
   background: #bf616a;
 }
+*/
 
-#clock,
-#pulseaudio,
-#network,
-#cpu,
-#memory,
-#battery,
-#tray {
-  padding: 0 10px;
-}
-
-#battery.warning {
-  color: #ebcb8b;
-}
-
-#battery.critical {
-  color: #bf616a;
-}

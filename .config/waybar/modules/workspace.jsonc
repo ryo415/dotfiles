@@ -1,0 +1,16 @@
+{
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "persistent-workspaces": {
+      "DP-5": [1, 2, 3, 4, 5],
+      "HDMI-A-2": [6, 7, 8, 9, 10]
+      
+    }
+  },
+  "hyprland/window": {
+    "format": "👉 {}",
+    "separate-outputs": true
+  }
+}
