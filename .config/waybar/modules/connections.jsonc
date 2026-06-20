@@ -8,9 +8,9 @@
     "format-alt": "{ifname}: {ipaddr}/{cidr}"
   },
   "bluetooth": {
-    "format": "󰂯",
-    "format-connected": "󰂱",
-    "format-disabled": "󰂲",
+    "format": "<span size='x-large'>󰂯</span>",
+    "format-connected": "<span size='x-large'>󰂱</span>",
+    "format-disabled": "<span size='x-large'>󰂲</span>",
     "tooltip-format": "{controller_alias} {status}",
     "tooltip-format-connected": "󰐻  {num_connections} Connected:\n{device_enumerate}",
     "tooltip-format-enumerate-connected-battery": "󰂱  {device_alias} (󰠠  {device_battery_percentage}%)"

@@ -1,8 +1,9 @@
 {
   "clock": {
     "format": "{:%Y-%m-%d %H:%M}",
-    "format-alt": "{:%A, %B %d, %Y (%R)}  ",
-    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "format-alt": "<span font_family='FiraCode Nerd Font Mono' size='x-large'></span> {:%Y年%m月%d日 (%a) %H:%M}",
+    "locale": "ja_JP.utf8",
+    "tooltip-format": "<span size='9pt'>{calendar}</span>",
     "calendar": {
       "mode"          : "year",
       "mode-mon-col"  : 4,

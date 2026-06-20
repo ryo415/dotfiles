@@ -10,12 +10,24 @@
 
 #custom-distro {
   color: @primary;
-  padding: 6px 15px 6px 10px;
+  font-size: 18px;
+  padding: 3px 15px 3px 10px;
 }
 
-#custom-terminal {
+#custom-terminal,
+#custom-steam,
+#custom-discord {
   color: #a6e3a1;
+  font-size: 18px;
   padding: 0px 10px;
+  min-width: 18px;
+  min-height: 0;
+}
+
+tooltip,
+tooltip * {
+  font-family: "Noto Sans Mono CJK JP", monospace;
+  letter-spacing: 0;
 }
 
 /*======= MODULE CAPSUL =======*/
@@ -24,7 +36,7 @@
 #system,
 #storage {
   margin: 4px 5px;
-  padding: 6px 6px;
+  padding: 2px 6px;
   background-color: @surface_container;
   border-radius: 20px;
   color: @secondary_fixed_dim;
@@ -41,6 +53,13 @@
 
 #network {
   padding: 0px 10px 0px 4px;
+}
+
+#clock {
+  margin: 4px 5px;
+  padding: 3px 6px;
+  background-color: @surface_container;
+  border-radius: 20px;
 }
 
 #pulseaudio {

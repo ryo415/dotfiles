@@ -1,5 +1,5 @@
 {
   "memory": {
-		"format": "{}% "
+		"format": "{}% <span size='16pt'></span>"
   }
 }

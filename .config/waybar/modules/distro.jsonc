@@ -1,11 +1,22 @@
 {
   "custom/distro": {
     "format": "",
+    "on-click": "wlogout",
     "tooltip": false
   },
   "custom/terminal": {
     "format": "󰆍",
     "on-click": "wezterm",
+    "tooltip": false
+  },
+  "custom/steam": {
+    "format": "",
+    "on-click": "steam",
+    "tooltip": false
+  },
+  "custom/discord": {
+    "format": "",
+    "on-click": "discord",
     "tooltip": false
   }
 }

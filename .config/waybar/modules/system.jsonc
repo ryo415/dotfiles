@@ -1,6 +1,6 @@
 {
   "cpu": {
-		"format": "{usage}% ",
+		"format": "{usage}% <span size='16pt'></span>",
 		"tooltip": false
   },
   "temperature": {
@@ -12,9 +12,9 @@
     "format-alt": "{icon} <span size='11pt'>{temperatureC}°C</span>",
     "format-critical": "<span size='12pt'>󱗗 </span><span size='11pt'>{temperatureC}°C</span>",
     "format-icons": [
-      "",
-      "",
-      ""
+      "<span size='x-large'></span>",
+      "<span size='x-large'></span>",
+      "<span size='x-large'></span>"
     ]
   }
 }
