@@ -19,7 +19,7 @@ local resizeStep = 40
 ------------------
 
 hl.bind(vars.main_mod .. " + Q", hl.dsp.window.close())
-hl.bind(vars.main_mod .. " + M", hl.dsp.exit())
+hl.bind(vars.main_mod .. " + M", hl.dsp.exec_cmd("wlogout"))
 hl.bind(vars.main_mod .. " + P", hl.dsp.window.pseudo())
 hl.bind(vars.main_mod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(vars.main_mod .. " + V", hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
