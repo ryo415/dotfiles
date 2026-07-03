@@ -46,6 +46,18 @@
   color: @error_container;
 }
 
+#window {
+  margin: 4px 5px 4px 0;
+  padding: 3px 10px;
+  background-color: @surface_container;
+  border-radius: 20px;
+  color: @on_surface;
+}
+
+#window label {
+  color: @on_surface;
+}
+
 #workspaces button label:first-child {
   margin-right: 8px;
 }

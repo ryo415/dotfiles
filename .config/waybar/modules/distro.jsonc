@@ -18,5 +18,10 @@
     "format": "",
     "on-click": "discord",
     "tooltip": false
+  },
+  "custom/notion": {
+    "format": "",
+    "on-click": "notion-app",
+    "tooltip": false
   }
 }

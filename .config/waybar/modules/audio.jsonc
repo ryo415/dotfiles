@@ -1,25 +1,22 @@
 {
-  "pulseaudio": {
-    // "scroll-step": 1, // %, can be a float
-    "format": "{volume}% {icon} {format_source}",
-    "format-bluetooth": "{volume}% {icon}<span size='16pt'></span> {format_source}",
-    "format-bluetooth-muted": "<span size='16pt'>󰅶</span> {icon}<span size='16pt'></span> {format_source}",
-    "format-muted": "<span size='16pt'>󰅶</span> {format_source}",
-    "format-source": "{volume}% <span size='16pt'></span>",
-    "format-source-muted": "<span size='16pt'></span>",
+  "wireplumber": {
+    "format": "{volume}% {icon}",
+    "format-muted": "<span size='16pt'>󰅶</span>",
     "format-icons": {
-        "headphone": "<span size='16pt'></span>",
-        "hands-free": "<span size='16pt'>󰂑</span>",
-        "headset": "<span size='16pt'>󰂑</span>",
-        "phone": "<span size='16pt'></span>",
-        "portable": "<span size='16pt'></span>",
-        "car": "<span size='16pt'></span>",
-        "default": [
-          "<span size='16pt'></span>",
-          "<span size='16pt'></span>",
-          "<span size='16pt'></span>"
-        ]
+      "default": [
+        "<span size='16pt'></span>",
+        "<span size='16pt'></span>",
+        "<span size='16pt'></span>"
+      ]
     },
-    "on-click": "pavucontrol"
+    "scroll-step": 5,
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "wireplumber#source": {
+    "node-type": "Audio/Source",
+    "format": "{volume}% <span size='16pt'></span>",
+    "format-muted": "<span size='16pt'></span>",
+    "scroll-step": 5,
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
   }
 }
