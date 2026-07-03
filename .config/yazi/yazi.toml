@@ -1,6 +1,19 @@
+[mgr]
+show_hidden = true
+show_symlink = true
+# linemode = "size" # サイズ
+# linemode = "btime" # 作成日時
+linemode = "mtime" # 更新日時
+# linemode = "permissions" # 権限
+# linemode = "owner" # 所有者
+# linemode = "none" # なし
+
 [opener]
 wine = [
   { run = 'wine "$@"', desc = "Wine", orphan = false, for = "unix" }
+]
+nvim = [
+  { run = 'nvim %s', block = true, for = "unix"},
 ]
 
 [open]
@@ -9,4 +22,5 @@ prepend_rules = [
   { url = "*.EXE", use = "wine" },
   { mime = "application/vnd.microsoft.portable-executable", use = "wine" },
   { mime = "application/microsoft.portable-executable", use = "wine" },
+  { mime = "text/*", use = "nvim" },
 ]
