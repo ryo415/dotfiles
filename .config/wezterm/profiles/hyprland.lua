@@ -11,7 +11,9 @@ function M.apply_to(config)
     config.window_background_opacity = 0.95
     config.window_decorations = "NONE"
 
-    config.front_end = "WebGpu"
+    -- config.front_end = "WebGpu"
+    -- config.front_end = "OpenGL"
+    config.front_end = "Software"
 
     config.window_padding = {
       left = 0,
