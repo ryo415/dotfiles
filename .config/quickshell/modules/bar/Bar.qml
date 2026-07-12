@@ -461,12 +461,13 @@ PanelWindow {
     property bool active: false
     property bool occupied: false
     property bool urgent: false
+    property bool hovered: false
 
     Layout.alignment: Qt.AlignVCenter
     Layout.preferredWidth: active ? 48 : 36
     Layout.preferredHeight: 22
     radius: 11
-    color: active ? bar.primary : "transparent"
+    color: active ? bar.primary : (hovered ? bar.surfaceContainerHighest : "transparent")
 
     Text {
       anchors.centerIn: parent
@@ -482,8 +483,8 @@ PanelWindow {
       cursorShape: Qt.PointingHandCursor
       hoverEnabled: true
       onClicked: parent.clicked()
-      onEntered: if (!parent.active) parent.color = bar.surfaceContainerHighest
-      onExited: if (!parent.active) parent.color = "transparent"
+      onEntered: parent.hovered = true
+      onExited: parent.hovered = false
     }
 
     Behavior on Layout.preferredWidth {
