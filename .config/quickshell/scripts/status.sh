@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Legacy polling helper retained for rollback. The Quickshell Bar uses system-monitor.
 set -u
 
 cpu_usage() {
@@ -18,7 +19,7 @@ cpu_usage() {
   idle_delta=$((idle2 - idle1))
   total_delta=$((total2 - total1))
 
-  if (( total_delta <= 0 )); then
+  if ((total_delta <= 0)); then
     printf "0"
   else
     printf "%d" $((100 * (total_delta - idle_delta) / total_delta))
@@ -53,11 +54,11 @@ temperature_icon() {
   fi
 
   temp="$(awk '{ printf "%d", $1 / 1000 }' "$temp_file")"
-  if (( temp >= 80 )); then
-    printf "󱗗 %d°C" "$temp"
-  elif (( temp >= 60 )); then
+  if ((temp >= 80)); then
+    printf "󱇗 %d°C" "$temp"
+  elif ((temp >= 60)); then
     printf " %d°C" "$temp"
-  elif (( temp >= 40 )); then
+  elif ((temp >= 40)); then
     printf " %d°C" "$temp"
   else
     printf " %d°C" "$temp"

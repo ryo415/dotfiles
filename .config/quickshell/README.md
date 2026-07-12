@@ -18,6 +18,39 @@ wlogoutへ戻す場合は、Power Menuを閉じて次を実行できます。
 wlogout
 ```
 
+## System Monitor
+
+Rust製の常駐プロセスが2秒ごとにCPU、RAM、温度を1行JSONで出力し、`SystemStats` Singletonが読み取ります。
+
+ビルドと配置:
+
+```sh
+cd ~/.config/quickshell/scripts-src/system-monitor
+cargo build --release
+mkdir -p ../../scripts
+cp target/release/system-monitor ../../scripts/system-monitor
+```
+
+単体実行:
+
+```sh
+~/.config/quickshell/scripts/system-monitor
+```
+
+更新間隔を変更する場合:
+
+```sh
+~/.config/quickshell/scripts/system-monitor --interval 1
+```
+
+出力例:
+
+```json
+{"cpu":12.3,"ram":48.1,"temp":55.0}
+```
+
+QMLからは `SystemStats.cpuUsage`、`SystemStats.ramUsage`、`SystemStats.temp` で参照できます。CPUとRAMは `0.0`〜`1.0`、温度は摂氏です。
+
 ## Notification Test
 
 mako と Quickshell は同時に通知デーモンとして動かせないため、テスト前に mako を停止します。
@@ -37,9 +70,12 @@ systemctl --user start mako.service
 
 ## Layout
 
-- Left: Hyprland workspaces, active window title
-- Center: clock, app launchers
-- Right: audio sink/source, network, bluetooth, temperature, CPU, memory, system tray
+- FullBar (main monitor): workspaces, active window, clock, launchers, audio, network, system stats, and tray
+- MiniBar (other monitors): monitor-local workspaces and clock
+
+Set the main monitor name in `modules/bar/BarConfig.qml`. Check available names with `hyprctl monitors`.
+If the configured monitor is disconnected, the first entry in `Quickshell.screens` receives the FullBar.
+Persistent workspace IDs for each monitor are also configured in `BarConfig.workspaceIdsFor()`.
 
 Waybar の対応元:
 
@@ -59,8 +95,17 @@ Waybar の対応元:
 - `modules/notifications/NotificationCard.qml`: notification popup presentation and timeout
 - `modules/power/PowerMenu.qml`: power menu overlay, IPC handler, and commands
 - `modules/power/PowerButton.qml`: power action button and confirmation state
-- `modules/bar/Bar.qml`: bar layout, colors, Quickshell service integration, small inline components
-- `scripts/status.sh`: CPU, memory, and temperature polling helper
+- `modules/services/SystemStats.qml`: Rust monitor process and parsed resource values
+- `modules/services/NetworkAddresses.qml`: active IPv4/IPv6 address polling for the Bar
+- `modules/services/AudioState.qml`: tracked default PipeWire sink/source state for the Bar
+- `modules/bar/Bars.qml`: per-screen FullBar/MiniBar selection and main-monitor fallback
+- `modules/bar/BarConfig.qml`: configured main monitor name
+- `modules/bar/FullBar.qml`: full main-monitor bar
+- `modules/bar/MiniBar.qml`: compact secondary-monitor bar
+- `modules/bar/Bar.qml`: shared bar layout, monitor-local workspaces, colors, and components
+- `scripts-src/system-monitor`: Rust source for the resource monitor
+- `scripts/system-monitor`: release build consumed by Quickshell
+- `scripts/status.sh`: legacy CPU, memory, and temperature polling helper (not used by the Bar)
 
 ## Design Notes
 

@@ -8,13 +8,17 @@ import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import "../services"
 
 PanelWindow {
   id: bar
 
-  readonly property int barHeight: 30
+  property bool miniMode: false
+
+  readonly property int barHeight: 36
   readonly property string fontFamily: "JetBrainsMono Nerd Font"
-  readonly property var persistentWorkspaces: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  readonly property var currentMonitor: Hyprland.monitorFor(screen)
+  readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name)
 
   readonly property color transparent: "#00000000"
   readonly property color surfaceContainer: "#1b2023"
@@ -29,10 +33,11 @@ PanelWindow {
   readonly property color error: "#ffb4ab"
   readonly property color launcherGreen: "#a6e3a1"
 
-  property string cpuText: "--% "
-  property string memoryText: "--% "
-  property string temperatureText: ""
+  readonly property string cpuText: Math.round(SystemStats.cpuUsage * 100) + "% "
+  readonly property string memoryText: Math.round(SystemStats.ramUsage * 100) + "% "
+  readonly property string temperatureText: temperatureIcon(SystemStats.temp) + " " + Math.round(SystemStats.temp) + "°C"
   property bool longClock: false
+  property bool showIpv6: false
 
   anchors {
     top: true
@@ -50,23 +55,22 @@ PanelWindow {
     launcher.startDetached();
   }
 
-  function parseStatus(output) {
-    const values = {};
-    for (const line of output.trim().split("\n")) {
-      const index = line.indexOf("=");
-      if (index > 0) {
-        values[line.slice(0, index)] = line.slice(index + 1);
-      }
+  function temperatureIcon(temperature) {
+    if (temperature >= 80) {
+      return "󱇗";
     }
-
-    cpuText = (values.cpu || "--") + "% ";
-    memoryText = (values.memory || "--") + "% ";
-    temperatureText = values.temperature || "";
+    if (temperature >= 60) {
+      return "";
+    }
+    if (temperature >= 40) {
+      return "";
+    }
+    return "";
   }
 
   function workspaceForId(id) {
     for (const workspace of Hyprland.workspaces.values) {
-      if (workspace.id === id) {
+      if (workspace.id === id && workspace.monitor === currentMonitor) {
         return workspace;
       }
     }
@@ -75,9 +79,15 @@ PanelWindow {
   }
 
   function activateWorkspace(id) {
+    if (!monitorWorkspaceIds.includes(id)) {
+      return;
+    }
+
     const workspace = workspaceForId(id);
     if (workspace !== null) {
       workspace.activate();
+    } else if (Hyprland.usingLua) {
+      Hyprland.dispatch('hl.dsp.focus({ workspace = "' + id + '" })');
     } else {
       Hyprland.dispatch("workspace " + id);
     }
@@ -96,50 +106,37 @@ PanelWindow {
   }
 
   function sinkText() {
-    const sink = Pipewire.defaultAudioSink;
-    if (sink === null || sink.audio === null) {
+    if (!AudioState.sinkReady) {
       return "--% ";
     }
 
-    if (sink.audio.muted) {
+    if (AudioState.sinkMuted) {
       return "󰅶";
     }
 
-    const volume = Math.round(sink.audio.volume * 100);
+    const volume = Math.round(AudioState.sinkVolume * 100);
     return volume + "% " + volumeIcon(volume);
   }
 
   function sourceText() {
-    const source = Pipewire.defaultAudioSource;
-    if (source === null || source.audio === null) {
+    if (!AudioState.sourceReady) {
       return "--% ";
     }
 
-    if (source.audio.muted) {
+    if (AudioState.sourceMuted) {
       return "";
     }
 
-    return Math.round(source.audio.volume * 100) + "% ";
+    return Math.round(AudioState.sourceVolume * 100) + "% ";
   }
 
   function networkText() {
-    for (const device of Networking.devices.values) {
-      if (!device.connected) {
-        continue;
-      }
-
-      for (const network of device.networks.values) {
-        if (network.connected && network.name.length > 0) {
-          return network.name;
-        }
-      }
-
-      if (device.name.length > 0) {
-        return device.name;
-      }
+    const address = showIpv6 ? NetworkAddresses.ipv6 : NetworkAddresses.ipv4;
+    if (address.length > 0) {
+      return address;
     }
 
-    return "Disconnected";
+    return showIpv6 ? "No IPv6" : "No IPv4";
   }
 
   function bluetoothText() {
@@ -165,26 +162,8 @@ PanelWindow {
     return Qt.formatDateTime(clock.date, "yyyy-MM-dd hh:mm");
   }
 
-  Component.onCompleted: statusProcess.exec(statusProcess.command)
-
   Process {
     id: launcher
-  }
-
-  Process {
-    id: statusProcess
-    command: ["sh", "-c", "exec ~/.config/quickshell/scripts/status.sh"]
-
-    stdout: StdioCollector {
-      onStreamFinished: bar.parseStatus(text)
-    }
-  }
-
-  Timer {
-    interval: 3000
-    running: true
-    repeat: true
-    onTriggered: statusProcess.exec(statusProcess.command)
   }
 
   SystemClock {
@@ -212,13 +191,16 @@ PanelWindow {
           spacing: 2
 
           Repeater {
-            model: bar.persistentWorkspaces
+            model: bar.monitorWorkspaceIds
 
             WorkspaceButton {
               required property int modelData
 
               workspaceId: modelData
-              active: Hyprland.focusedWorkspace !== null && Hyprland.focusedWorkspace.id === modelData
+              active: {
+                const workspace = bar.workspaceForId(modelData);
+                return workspace !== null && workspace.active;
+              }
               occupied: bar.workspaceForId(modelData) !== null
               urgent: {
                 const workspace = bar.workspaceForId(modelData);
@@ -230,6 +212,7 @@ PanelWindow {
         }
 
         BarLabel {
+          visible: !bar.miniMode
           Layout.fillWidth: true
           Layout.maximumWidth: 420
           elide: Text.ElideRight
@@ -257,6 +240,8 @@ PanelWindow {
         }
 
         Capsule {
+          visible: !bar.miniMode
+
           IconButton {
             text: ""
             foreground: bar.primary
@@ -300,6 +285,7 @@ PanelWindow {
         }
 
         Capsule {
+          visible: !bar.miniMode
           interactive: true
           acceptedButtons: Qt.LeftButton | Qt.RightButton
           onClicked: mouse => {
@@ -320,6 +306,10 @@ PanelWindow {
         }
 
         Capsule {
+          visible: !bar.miniMode
+          interactive: true
+          onClicked: bar.showIpv6 = !bar.showIpv6
+
           BarLabel {
             text: bar.networkText()
           }
@@ -330,6 +320,8 @@ PanelWindow {
         }
 
         Capsule {
+          visible: !bar.miniMode
+
           BarLabel {
             text: bar.temperatureText
           }
@@ -340,28 +332,40 @@ PanelWindow {
         }
 
         Capsule {
+          visible: !bar.miniMode
+
           BarLabel {
             text: bar.memoryText
           }
         }
 
         Capsule {
-          visible: SystemTray.items.values.length > 0
+          visible: !bar.miniMode && SystemTray.items.values.length > 0
 
           Repeater {
             model: SystemTray.items
 
             Item {
               required property var modelData
+              readonly property bool useKeyboardFallback: String(modelData.icon).includes("input-keyboard-symbolic")
 
-              Layout.preferredWidth: 22
-              Layout.preferredHeight: 22
+              Layout.preferredWidth: 26
+              Layout.preferredHeight: 26
 
               IconImage {
+                id: trayIcon
+
                 anchors.centerIn: parent
-                width: 20
-                height: 20
-                source: modelData.icon
+                width: 24
+                height: 24
+                source: parent.useKeyboardFallback ? "" : modelData.icon
+                visible: !parent.useKeyboardFallback && status !== Image.Error
+              }
+
+              BarLabel {
+                anchors.centerIn: parent
+                text: ""
+                visible: parent.useKeyboardFallback || trayIcon.status === Image.Error
               }
 
               MouseArea {
@@ -395,9 +399,9 @@ PanelWindow {
     property int acceptedButtons: Qt.LeftButton
 
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredHeight: 22
-    implicitWidth: contentRow.implicitWidth + 12
-    radius: 11
+    Layout.preferredHeight: 28
+    implicitWidth: contentRow.implicitWidth + 16
+    radius: 14
     color: bar.surfaceContainer
 
     RowLayout {
@@ -425,7 +429,7 @@ PanelWindow {
     Layout.alignment: Qt.AlignVCenter
     color: bar.secondary
     font.family: bar.fontFamily
-    font.pixelSize: 13
+    font.pixelSize: 15
     textFormat: Text.PlainText
     verticalAlignment: Text.AlignVCenter
   }
@@ -436,10 +440,10 @@ PanelWindow {
     property color foreground: bar.launcherGreen
 
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: 26
+    Layout.preferredWidth: 30
     color: foreground
     font.family: bar.fontFamily
-    font.pixelSize: 18
+    font.pixelSize: 20
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
 
@@ -459,16 +463,17 @@ PanelWindow {
     property bool urgent: false
 
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: active ? 44 : 32
-    Layout.preferredHeight: 18
-    radius: 9
+    Layout.preferredWidth: active ? 48 : 36
+    Layout.preferredHeight: 22
+    radius: 11
     color: active ? bar.primary : "transparent"
 
     Text {
       anchors.centerIn: parent
-      color: parent.active ? bar.onPrimaryColor : (parent.urgent ? bar.error : (parent.occupied ? bar.tertiary : bar.outlineVariant))
+      color: parent.active ? bar.surfaceContainer : (parent.urgent ? bar.error : (parent.occupied ? bar.tertiary : bar.outlineVariant))
       font.family: bar.fontFamily
-      font.pixelSize: 13
+      font.pixelSize: 15
+      font.weight: parent.active ? Font.Bold : Font.Normal
       text: parent.workspaceId
     }
 
