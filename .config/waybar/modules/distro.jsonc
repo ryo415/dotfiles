@@ -1,7 +1,7 @@
 {
   "custom/distro": {
     "format": "",
-    "on-click": "wlogout",
+    "on-click": "quickshell ipc call powerMenu toggle",
     "tooltip": false
   },
   "custom/terminal": {

@@ -1,0 +1,12 @@
+[Unit]
+Description=Quickshell
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/quickshell --no-duplicate
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
