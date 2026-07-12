@@ -5,3 +5,27 @@ python = "latest"
 ruby = "latest"
 rust = "latest"
 
+[settings]
+dotfiles.root = "~/dotfiles"
+dotfiles.default_mode = "symlink"
+
+[bootstrap.repos]
+"~/dotfiles" = { url = "git@github.com:ryo415/dotfiles.git", ref = "main" }
+
+[dotfiles]
+"~/.config/nvim" = {
+  source = ".config/nvim",
+  mode = "symlink"
+}
+"~/.config/yazi" = {
+  source = ".config/yazi",
+  mode = "symlink"
+}
+"~/.config/starship" = {
+  source = ".config/starship.toml",
+  mode = "symlink"
+}
+"~/.config/wezterm" = {
+  source = ".config/wezterm",
+  mode = "symlink"
+}
