@@ -1,43 +1,43 @@
 import Quickshell
-import Quickshell.Bluetooth
 import Quickshell.Hyprland
 import Quickshell.Io
-import Quickshell.Networking
-import Quickshell.Services.Pipewire
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 import "../services"
+import "components"
 
 PanelWindow {
   id: bar
 
   property bool miniMode: false
+  property bool longClock: false
+  property bool showIpv6: false
 
-  readonly property int barHeight: 36
-  readonly property string fontFamily: "JetBrainsMono Nerd Font"
+  readonly property int islandHeight: miniMode ? 30 : 34
+  readonly property int panelHeight: miniMode ? 38 : 44
+  readonly property string fontFamily: "FiraCode Nerd Font Mono"
   readonly property var currentMonitor: Hyprland.monitorFor(screen)
   readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name)
 
+  // Catppuccin Mocha surfaces with a restrained Material You lavender accent.
   readonly property color transparent: "#00000000"
-  readonly property color surfaceContainer: "#1b2023"
-  readonly property color surfaceContainerHigh: "#252b2d"
-  readonly property color surfaceContainerHighest: "#303638"
-  readonly property color primary: "#88d1ec"
-  readonly property color onPrimaryColor: "#003544"
-  readonly property color secondary: "#b3cad4"
-  readonly property color tertiary: "#c3c3eb"
-  readonly property color outline: "#8a9296"
-  readonly property color outlineVariant: "#40484c"
-  readonly property color error: "#ffb4ab"
-  readonly property color launcherGreen: "#a6e3a1"
+  readonly property color surface: "#ef1e1e2e"
+  readonly property color surfaceVariant: "#45475a"
+  readonly property color surfaceHover: "#585b70"
+  readonly property color outline: "#66585b70"
+  readonly property color accent: "#b4befe"
+  readonly property color activeText: "#1e1e2e"
+  readonly property color textColor: "#cdd6f4"
+  readonly property color mutedText: "#a6adc8"
+  readonly property color dimText: "#7f849c"
+  readonly property color warning: "#f9e2af"
+  readonly property color powerColor: "#f2cdcd"
 
-  readonly property string cpuText: Math.round(SystemStats.cpuUsage * 100) + "% "
-  readonly property string memoryText: Math.round(SystemStats.ramUsage * 100) + "% "
-  readonly property string temperatureText: temperatureIcon(SystemStats.temp) + " " + Math.round(SystemStats.temp) + "°C"
-  property bool longClock: false
-  property bool showIpv6: false
+  readonly property string cpuText: "CPU " + Math.round(SystemStats.cpuUsage * 100) + "%"
+  readonly property string memoryText: "RAM " + Math.round(SystemStats.ramUsage * 100) + "%"
+  readonly property string temperatureText: Math.round(SystemStats.temp) + "°C"
 
   anchors {
     top: true
@@ -45,28 +45,10 @@ PanelWindow {
     right: true
   }
 
-  implicitHeight: barHeight
-  exclusiveZone: barHeight
+  implicitHeight: panelHeight
+  exclusiveZone: panelHeight
   aboveWindows: true
   color: transparent
-
-  function runDetached(command) {
-    launcher.command = ["sh", "-lc", command];
-    launcher.startDetached();
-  }
-
-  function temperatureIcon(temperature) {
-    if (temperature >= 80) {
-      return "󱇗";
-    }
-    if (temperature >= 60) {
-      return "";
-    }
-    if (temperature >= 40) {
-      return "";
-    }
-    return "";
-  }
 
   function workspaceForId(id) {
     for (const workspace of Hyprland.workspaces.values) {
@@ -93,65 +75,13 @@ PanelWindow {
     }
   }
 
-  function volumeIcon(volume) {
-    if (volume < 35) {
-      return "";
-    }
-
-    if (volume < 70) {
-      return "";
-    }
-
-    return "";
-  }
-
-  function sinkText() {
-    if (!AudioState.sinkReady) {
-      return "--% ";
-    }
-
-    if (AudioState.sinkMuted) {
-      return "󰅶";
-    }
-
-    const volume = Math.round(AudioState.sinkVolume * 100);
-    return volume + "% " + volumeIcon(volume);
-  }
-
-  function sourceText() {
-    if (!AudioState.sourceReady) {
-      return "--% ";
-    }
-
-    if (AudioState.sourceMuted) {
-      return "";
-    }
-
-    return Math.round(AudioState.sourceVolume * 100) + "% ";
-  }
-
   function networkText() {
     const address = showIpv6 ? NetworkAddresses.ipv6 : NetworkAddresses.ipv4;
     if (address.length > 0) {
-      return address;
+      return "󰖩 " + address;
     }
 
-    return showIpv6 ? "No IPv6" : "No IPv4";
-  }
-
-  function bluetoothText() {
-    const adapter = Bluetooth.defaultAdapter;
-    if (adapter !== null && !adapter.enabled) {
-      return "󰂲";
-    }
-
-    for (const device of Bluetooth.devices.values) {
-      if (device.connected) {
-        return "󰂱";
-      }
-    }
-
-    return "󰂯";
+    return showIpv6 ? "󰖪 No IPv6" : "󰖪 No IPv4";
   }
 
   function clockText() {
@@ -159,11 +89,16 @@ PanelWindow {
       return Qt.formatDateTime(clock.date, "yyyy年MM月dd日 (ddd) hh:mm");
     }
 
-    return Qt.formatDateTime(clock.date, "yyyy-MM-dd hh:mm");
+    return miniMode ? Qt.formatDateTime(clock.date, "hh:mm") : Qt.formatDateTime(clock.date, "MM/dd (ddd)  hh:mm");
+  }
+
+  function togglePowerMenu() {
+    powerMenuToggle.startDetached();
   }
 
   Process {
-    id: launcher
+    id: powerMenuToggle
+    command: ["quickshell", "ipc", "call", "powerMenu", "toggle"]
   }
 
   SystemClock {
@@ -171,326 +106,201 @@ PanelWindow {
     precision: SystemClock.Minutes
   }
 
-  Rectangle {
-    anchors.fill: parent
-    color: bar.transparent
+  BarIsland {
+    id: workspaceIsland
+
+    anchors.left: parent.left
+    anchors.leftMargin: 8
+    anchors.top: parent.top
+    anchors.topMargin: miniMode ? 4 : 6
+    islandHeight: bar.islandHeight
+    horizontalPadding: miniMode ? 8 : 10
+    surfaceColor: bar.surface
+    outlineColor: bar.outline
+    spacing: 4
+
+    Repeater {
+      model: bar.monitorWorkspaceIds
+
+      WorkspaceButton {
+        required property int modelData
+
+        workspaceId: modelData
+        active: {
+          const workspace = bar.workspaceForId(modelData);
+          return workspace !== null && workspace.active;
+        }
+        occupied: bar.workspaceForId(modelData) !== null
+        urgent: {
+          const workspace = bar.workspaceForId(modelData);
+          return workspace !== null && workspace.urgent;
+        }
+        accentColor: bar.accent
+        activeTextColor: bar.activeText
+        surfaceColor: bar.surfaceVariant
+        hoverColor: bar.surfaceHover
+        textColor: bar.textColor
+        mutedColor: bar.dimText
+        warningColor: bar.warning
+        fontFamily: bar.fontFamily
+        onClicked: bar.activateWorkspace(modelData)
+      }
+    }
+  }
+
+  BarIsland {
+    id: clockIsland
+
+    anchors.top: parent.top
+    anchors.topMargin: miniMode ? 4 : 6
+    anchors.horizontalCenter: miniMode ? undefined : parent.horizontalCenter
+    anchors.right: miniMode ? parent.right : undefined
+    anchors.rightMargin: miniMode ? 8 : 0
+    islandHeight: bar.islandHeight
+    horizontalPadding: 12
+    surfaceColor: bar.surface
+    outlineColor: bar.outline
+
+    StatusPill {
+      text: bar.clockText()
+      foreground: bar.textColor
+      surfaceColor: bar.transparent
+      hoverColor: "#44585b70"
+      fontFamily: bar.fontFamily
+      interactive: true
+      onClicked: bar.longClock = !bar.longClock
+    }
+  }
+
+  BarIsland {
+    id: statusIsland
+
+    visible: !bar.miniMode
+    anchors.right: parent.right
+    anchors.rightMargin: 8
+    anchors.top: parent.top
+    anchors.topMargin: 6
+    islandHeight: bar.islandHeight
+    horizontalPadding: 10
+    surfaceColor: bar.surface
+    outlineColor: bar.outline
+    spacing: 5
+
+    StatusPill {
+      text: bar.networkText()
+      foreground: bar.mutedText
+      surfaceColor: "#3345475a"
+      hoverColor: "#66585b70"
+      fontFamily: bar.fontFamily
+      interactive: true
+      onClicked: bar.showIpv6 = !bar.showIpv6
+    }
+
+    StatusPill {
+      text: bar.cpuText
+      foreground: bar.textColor
+      surfaceColor: "#3345475a"
+      fontFamily: bar.fontFamily
+    }
+
+    StatusPill {
+      text: bar.memoryText
+      foreground: bar.textColor
+      surfaceColor: "#3345475a"
+      fontFamily: bar.fontFamily
+    }
+
+    StatusPill {
+      text: bar.temperatureText
+      foreground: bar.mutedText
+      surfaceColor: "#3345475a"
+      fontFamily: bar.fontFamily
+    }
 
     RowLayout {
-      anchors.fill: parent
-      anchors.leftMargin: 5
-      anchors.rightMargin: 5
-      spacing: 0
+      visible: SystemTray.items.values.length > 0
+      spacing: 2
 
-      RowLayout {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-        Layout.fillWidth: true
-        Layout.maximumWidth: parent.width / 3
-        spacing: 6
-
-        Capsule {
-          spacing: 2
-
-          Repeater {
-            model: bar.monitorWorkspaceIds
-
-            WorkspaceButton {
-              required property int modelData
-
-              workspaceId: modelData
-              active: {
-                const workspace = bar.workspaceForId(modelData);
-                return workspace !== null && workspace.active;
-              }
-              occupied: bar.workspaceForId(modelData) !== null
-              urgent: {
-                const workspace = bar.workspaceForId(modelData);
-                return workspace !== null && workspace.urgent;
-              }
-              onClicked: bar.activateWorkspace(modelData)
-            }
-          }
-        }
-
-        BarLabel {
-          visible: !bar.miniMode
-          Layout.fillWidth: true
-          Layout.maximumWidth: 420
-          elide: Text.ElideRight
-          text: Hyprland.activeToplevel !== null && Hyprland.activeToplevel.title.length > 0 ? " " + Hyprland.activeToplevel.title : ""
-        }
-      }
-
-      RowLayout {
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        Layout.fillWidth: true
-        spacing: 5
+      Repeater {
+        model: SystemTray.items
 
         Item {
-          Layout.fillWidth: true
-        }
+          required property var modelData
+          readonly property bool useKeyboardFallback: String(modelData.icon).includes("input-keyboard-symbolic")
 
-        Capsule {
-          interactive: true
-          acceptedButtons: Qt.LeftButton | Qt.RightButton
-          onClicked: bar.longClock = !bar.longClock
+          Layout.preferredWidth: 26
+          Layout.preferredHeight: 26
 
-          BarLabel {
-            text: bar.clockText()
-          }
-        }
+          IconImage {
+            id: trayIcon
 
-        Capsule {
-          visible: !bar.miniMode
-
-          IconButton {
-            text: ""
-            foreground: bar.primary
-            onClicked: bar.runDetached("wlogout")
+            anchors.centerIn: parent
+            width: 20
+            height: 20
+            source: parent.useKeyboardFallback ? "" : modelData.icon
+            visible: !parent.useKeyboardFallback && status !== Image.Error
           }
 
-          IconButton {
-            text: "󰆍"
-            onClicked: bar.runDetached("wezterm")
+          Text {
+            anchors.centerIn: parent
+            color: bar.mutedText
+            font.family: bar.fontFamily
+            font.pixelSize: 15
+            text: ""
+            visible: parent.useKeyboardFallback || trayIcon.status === Image.Error
           }
 
-          IconButton {
-            text: ""
-            onClicked: bar.runDetached("steam")
-          }
-
-          IconButton {
-            text: ""
-            onClicked: bar.runDetached("discord")
-          }
-
-          IconButton {
-            text: ""
-            onClicked: bar.runDetached("notion-app")
-          }
-        }
-
-        Item {
-          Layout.fillWidth: true
-        }
-      }
-
-      RowLayout {
-        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        Layout.fillWidth: true
-        Layout.maximumWidth: parent.width / 3
-        spacing: 5
-
-        Item {
-          Layout.fillWidth: true
-        }
-
-        Capsule {
-          visible: !bar.miniMode
-          interactive: true
-          acceptedButtons: Qt.LeftButton | Qt.RightButton
-          onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton) {
-              bar.runDetached("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle");
-            } else if (mouse.button === Qt.RightButton) {
-              bar.runDetached("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle");
-            }
-          }
-
-          BarLabel {
-            text: bar.sinkText()
-          }
-
-          BarLabel {
-            text: bar.sourceText()
-          }
-        }
-
-        Capsule {
-          visible: !bar.miniMode
-          interactive: true
-          onClicked: bar.showIpv6 = !bar.showIpv6
-
-          BarLabel {
-            text: bar.networkText()
-          }
-
-          BarLabel {
-            text: bar.bluetoothText()
-          }
-        }
-
-        Capsule {
-          visible: !bar.miniMode
-
-          BarLabel {
-            text: bar.temperatureText
-          }
-
-          BarLabel {
-            text: bar.cpuText
-          }
-        }
-
-        Capsule {
-          visible: !bar.miniMode
-
-          BarLabel {
-            text: bar.memoryText
-          }
-        }
-
-        Capsule {
-          visible: !bar.miniMode && SystemTray.items.values.length > 0
-
-          Repeater {
-            model: SystemTray.items
-
-            Item {
-              required property var modelData
-              readonly property bool useKeyboardFallback: String(modelData.icon).includes("input-keyboard-symbolic")
-
-              Layout.preferredWidth: 26
-              Layout.preferredHeight: 26
-
-              IconImage {
-                id: trayIcon
-
-                anchors.centerIn: parent
-                width: 24
-                height: 24
-                source: parent.useKeyboardFallback ? "" : modelData.icon
-                visible: !parent.useKeyboardFallback && status !== Image.Error
-              }
-
-              BarLabel {
-                anchors.centerIn: parent
-                text: ""
-                visible: parent.useKeyboardFallback || trayIcon.status === Image.Error
-              }
-
-              MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: mouse => {
-                  if (mouse.button === Qt.LeftButton) {
-                    modelData.activate();
-                  } else if (mouse.button === Qt.MiddleButton) {
-                    modelData.secondaryActivate();
-                  } else if (mouse.button === Qt.RightButton) {
-                    modelData.display(bar, x, y);
-                  }
-                }
+          MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            cursorShape: Qt.PointingHandCursor
+            onClicked: mouse => {
+              if (mouse.button === Qt.LeftButton) {
+                modelData.activate();
+              } else if (mouse.button === Qt.MiddleButton) {
+                modelData.secondaryActivate();
+              } else if (mouse.button === Qt.RightButton) {
+                modelData.display(bar, x, y);
               }
             }
           }
         }
       }
     }
-  }
 
-  component Capsule: Rectangle {
-    signal clicked(var mouse)
-
-    default property alias content: contentRow.data
-    property alias spacing: contentRow.spacing
-    property string command: ""
-    property bool interactive: false
-    property int acceptedButtons: Qt.LeftButton
-
-    Layout.alignment: Qt.AlignVCenter
-    Layout.preferredHeight: 28
-    implicitWidth: contentRow.implicitWidth + 16
-    radius: 14
-    color: bar.surfaceContainer
-
-    RowLayout {
-      id: contentRow
-      anchors.centerIn: parent
-      spacing: 8
+    Rectangle {
+      Layout.preferredWidth: 1
+      Layout.preferredHeight: 18
+      Layout.alignment: Qt.AlignVCenter
+      color: bar.outline
     }
 
-    MouseArea {
-      anchors.fill: parent
-      acceptedButtons: parent.acceptedButtons
-      cursorShape: parent.command.length > 0 || parent.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
-      enabled: parent.command.length > 0 || parent.interactive
-      onClicked: mouse => {
-        if (parent.command.length > 0) {
-          bar.runDetached(parent.command);
-        }
+    Rectangle {
+      id: powerButton
 
-        parent.clicked(mouse);
+      property bool hovered: false
+
+      Layout.preferredWidth: 28
+      Layout.preferredHeight: 28
+      Layout.alignment: Qt.AlignVCenter
+      radius: 14
+      color: hovered ? "#66585b70" : bar.transparent
+
+      Text {
+        anchors.centerIn: parent
+        color: bar.powerColor
+        font.family: bar.fontFamily
+        font.pixelSize: 17
+        text: ""
       }
-    }
-  }
 
-  component BarLabel: Text {
-    Layout.alignment: Qt.AlignVCenter
-    color: bar.secondary
-    font.family: bar.fontFamily
-    font.pixelSize: 15
-    textFormat: Text.PlainText
-    verticalAlignment: Text.AlignVCenter
-  }
-
-  component IconButton: Text {
-    signal clicked()
-
-    property color foreground: bar.launcherGreen
-
-    Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: 30
-    color: foreground
-    font.family: bar.fontFamily
-    font.pixelSize: 20
-    horizontalAlignment: Text.AlignHCenter
-    verticalAlignment: Text.AlignVCenter
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.PointingHandCursor
-      onClicked: parent.clicked()
-    }
-  }
-
-  component WorkspaceButton: Rectangle {
-    signal clicked()
-
-    property int workspaceId: 0
-    property bool active: false
-    property bool occupied: false
-    property bool urgent: false
-    property bool hovered: false
-
-    Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: active ? 48 : 36
-    Layout.preferredHeight: 22
-    radius: 11
-    color: active ? bar.primary : (hovered ? bar.surfaceContainerHighest : "transparent")
-
-    Text {
-      anchors.centerIn: parent
-      color: parent.active ? bar.surfaceContainer : (parent.urgent ? bar.error : (parent.occupied ? bar.tertiary : bar.outlineVariant))
-      font.family: bar.fontFamily
-      font.pixelSize: 15
-      font.weight: parent.active ? Font.Bold : Font.Normal
-      text: parent.workspaceId
-    }
-
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.PointingHandCursor
-      hoverEnabled: true
-      onClicked: parent.clicked()
-      onEntered: parent.hovered = true
-      onExited: parent.hovered = false
-    }
-
-    Behavior on Layout.preferredWidth {
-      NumberAnimation {
-        duration: 180
-        easing.type: Easing.OutCubic
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onClicked: bar.togglePowerMenu()
+        onEntered: powerButton.hovered = true
+        onExited: powerButton.hovered = false
       }
     }
   }

@@ -1,6 +1,6 @@
 # Quickshell Desktop Modules
 
-現在は通知デーモン、右上の通知ポップアップ、Power Menuを起動します。Waybar から移行するための `Bar.qml` はプロトタイプとして残していますが、`shell.qml` では一時的に無効化しています。
+現在はマルチモニターBar、通知デーモン、右上の通知ポップアップ、Power Menuを起動します。
 
 ## Power Menu
 
@@ -70,7 +70,7 @@ systemctl --user start mako.service
 
 ## Layout
 
-- FullBar (main monitor): workspaces, active window, clock, launchers, audio, network, system stats, and tray
+- FullBar (main monitor): three floating islands for workspaces, clock, and network/system stats/tray/power
 - MiniBar (other monitors): monitor-local workspaces and clock
 
 Set the main monitor name in `modules/bar/BarConfig.qml`. Check available names with `hyprctl monitors`.
@@ -102,7 +102,10 @@ Waybar の対応元:
 - `modules/bar/BarConfig.qml`: configured main monitor name
 - `modules/bar/FullBar.qml`: full main-monitor bar
 - `modules/bar/MiniBar.qml`: compact secondary-monitor bar
-- `modules/bar/Bar.qml`: shared bar layout, monitor-local workspaces, colors, and components
+- `modules/bar/Bar.qml`: shared floating-island layout, monitor-local workspace filtering, and Bar data bindings
+- `modules/bar/components/BarIsland.qml`: shared translucent island surface
+- `modules/bar/components/WorkspaceButton.qml`: active/inactive/urgent workspace pill
+- `modules/bar/components/StatusPill.qml`: shared status label surface
 - `scripts-src/system-monitor`: Rust source for the resource monitor
 - `scripts/system-monitor`: release build consumed by Quickshell
 - `scripts/status.sh`: legacy CPU, memory, and temperature polling helper (not used by the Bar)
@@ -110,13 +113,11 @@ Waybar の対応元:
 ## Design Notes
 
 - Quickshell: `0.3.0`
-- Bar height: `30px`
+- Island height: FullBar `34px`, MiniBar `30px`
 - Background: transparent
-- Module style: compact capsules based on the existing Waybar CSS
-- Colors: copied from the current matugen-generated Waybar palette
-- Font: `JetBrainsMono Nerd Font`
-
-This is intentionally a prototype. Once the shape feels right, split `Bar.qml` into smaller widgets such as `Workspaces.qml`, `Audio.qml`, `SystemStats.qml`, and `Tray.qml`.
+- Module style: three floating islands on FullBar and two on MiniBar
+- Colors: Catppuccin Mocha surfaces with a restrained Material You lavender accent
+- Font: `FiraCode Nerd Font Mono`
 
 ## Commands
 
@@ -142,11 +143,11 @@ pkill waybar
 
 - Workspace click: switch workspace
 - Clock click: toggle short / long clock format
-- Audio left click: toggle default sink mute
-- Audio right click: toggle default source mute
+- Network click: toggle IPv4 / IPv6
 - Tray left click: activate item
 - Tray middle click: secondary activate
 - Tray right click: show item menu
+- Power click: toggle the existing Power Menu through Quickshell IPC
 
 ## Current Limits
 
