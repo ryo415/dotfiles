@@ -76,6 +76,7 @@ systemctl --user start mako.service
 Set the main monitor name in `modules/bar/BarConfig.qml`. Check available names with `hyprctl monitors`.
 If the configured monitor is disconnected, the first entry in `Quickshell.screens` receives the FullBar.
 Persistent workspace IDs for each monitor are also configured in `BarConfig.workspaceIdsFor()`.
+With only one connected monitor, the FullBar exposes workspaces `1..10` on that screen.
 
 Waybar の対応元:
 

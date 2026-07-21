@@ -19,7 +19,7 @@ PanelWindow {
   readonly property int panelHeight: miniMode ? 38 : 44
   readonly property string fontFamily: "FiraCode Nerd Font Mono"
   readonly property var currentMonitor: Hyprland.monitorFor(screen)
-  readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name)
+  readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name, Quickshell.screens.length === 1)
 
   // Catppuccin Mocha surfaces with a restrained Material You lavender accent.
   readonly property color transparent: "#00000000"
