@@ -8,7 +8,6 @@ local config = wezterm.config_builder()
 local is_windows = wezterm.target_triple:find("windows") ~= nil
 local is_macos = wezterm.target_triple:find("apple%-darwin") ~= nil
 local is_linux = wezterm.target_triple:find("linux") ~= nil
-local is_sway = os.getenv("SWAYSOCK") ~= nil
 local is_hyprland = os.getenv("HYPRLAND_INSTANCE_SIGNATURE") ~= nil
 local is_kde_plasma = os.getenv("XDG_CURRENT_DESKTOP") == "KDE"
 
@@ -20,9 +19,7 @@ elseif is_macos then
   require('profiles.macos').apply_to(config)
 elseif is_linux then
   require('profiles.linux').apply_to(config)
-  if is_sway then
-    require('profiles.sway').apply_to(config)
-  elseif is_hyprland then
+  if is_hyprland then
     require('profiles.hyprland').apply_to(config)
   elseif is_kde_plasma then
     require('profiles.kde').apply_to(config)
