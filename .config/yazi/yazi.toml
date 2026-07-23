@@ -13,7 +13,7 @@ wine = [
   { run = 'wine "$@"', desc = "Wine", orphan = false, for = "unix" }
 ]
 nvim = [
-  { run = 'nvim %s', block = true, for = "unix"},
+  { run = 'nvim $@', block = true, for = "unix"},
 ]
 
 [open]
