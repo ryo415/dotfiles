@@ -3,6 +3,7 @@ local wezterm = require "wezterm"
 local act = wezterm.action
 
 function M.apply_to(config)
+    config.font_size = 10
     config.enable_tab_bar = false
     config.hide_tab_bar_if_only_one_tab = true
     config.enable_wayland = true
