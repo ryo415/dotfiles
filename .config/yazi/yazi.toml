@@ -24,6 +24,7 @@ prepend_rules = [
   { url = "*.exe", use = "wine" },
   { url = "*.EXE", use = "wine" },
   { url = "*.webp", use = "qview" },
+  { url = "*.png", use = "qview"},
   { mime = "application/vnd.microsoft.portable-executable", use = "wine" },
   { mime = "application/microsoft.portable-executable", use = "wine" },
   { mime = "text/*", use = "nvim" },
