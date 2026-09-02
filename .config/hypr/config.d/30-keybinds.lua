@@ -21,7 +21,7 @@ local resizeStep = 40
 hl.bind(vars.main_mod .. " + Q", hl.dsp.window.close())
 hl.bind(vars.main_mod .. " + M", hl.dsp.exec_cmd("quickshell ipc call powerMenu toggle"))
 hl.bind(vars.main_mod .. " + P", hl.dsp.window.pseudo())
-hl.bind(vars.main_mod .. " + J", hl.dsp.layout("togglesplit"))
+hl.bind(vars.main_mod .. " + SLASH", hl.dsp.layout("togglesplit"))
 hl.bind(vars.main_mod .. " + V", hl.dsp.exec_cmd("~/.config/hypr/scripts/clipboard.sh"))
 hl.bind(vars.main_mod .. " + ALT + L", hl.dsp.exec_cmd("hyprlock"))
 
