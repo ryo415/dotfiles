@@ -46,10 +46,10 @@ cp target/release/system-monitor ../../scripts/system-monitor
 出力例:
 
 ```json
-{"cpu":12.3,"ram":48.1,"temp":55.0}
+{"cpu":12.3,"ram":48.1,"temp":55.0,"ramUsed":8270697660,"ramTotal":17179869184}
 ```
 
-QMLからは `SystemStats.cpuUsage`、`SystemStats.ramUsage`、`SystemStats.temp` で参照できます。CPUとRAMは `0.0`〜`1.0`、温度は摂氏です。
+QMLからは `SystemStats.cpuUsage`、`SystemStats.ramUsage`、`SystemStats.temp` で参照できます。CPUとRAMは `0.0`〜`1.0`、温度は摂氏です。`ramUsed` と `ramTotal` はバイト単位で、`cpuHistory` は直近60サンプル（約2分）を保持します。
 
 ## Notification Test
 
@@ -143,7 +143,12 @@ pkill waybar
 ## Interactions
 
 - Workspace click: switch workspace
-- Clock click: toggle short / long clock format
+- Clock left click: open a calendar (previous/next month and return to today)
+- Clock right click: toggle short / long clock format
+- CPU click: open usage history and temperature
+- RAM click: open usage percentage and used / total GiB
+- Volume click: open the output device name, volume slider (0–100%), and mute control
+- Popup: click the same item, click outside the bar/popup, or press Escape to close; click another item to switch
 - Network click: toggle IPv4 / IPv6
 - Tray left click: activate item
 - Tray middle click: secondary activate
@@ -153,6 +158,26 @@ pkill waybar
 ## Current Limits
 
 - Network display is intentionally simple: Wi-Fi SSID if available, otherwise device name.
-- The Waybar calendar tooltip is not implemented yet.
 - Drawer animations from Waybar groups are not implemented yet.
 - Per-monitor persistent workspace mapping is simplified to fixed workspaces `1..10`.
+
+## Bar Popups
+
+`modules/bar/components/BarPopup.qml` provides the shared anchored window;
+`ResourcePanel.qml`, `CalendarPanel.qml`, and `AudioPanel.qml` provide its content.
+The panels follow the widget/panel approach in
+[mszost/quickshell-config](https://github.com/mszost/quickshell-config), with the existing local bar colors.
+The calendar is also available on MiniBar. Audio controls use the default PipeWire output;
+when no output is available, controls are disabled.
+
+After changing the Rust monitor, rebuild and replace `scripts/system-monitor` using the
+System Monitor instructions above, then reload Quickshell so it starts the new executable.
+
+Verification:
+
+```sh
+cargo test --offline --manifest-path ~/.config/quickshell/scripts-src/system-monitor/Cargo.toml
+```
+
+On Hyprland, check each popup's position, repeated-click close, switching between items,
+outside-click close, Escape, calendar month rollover, and volume/mute changes.

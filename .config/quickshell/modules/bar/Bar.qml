@@ -93,12 +93,18 @@ PanelWindow {
   }
 
   function togglePowerMenu() {
+    statusPopup.close();
     powerMenuToggle.startDetached();
   }
 
   Process {
     id: powerMenuToggle
     command: ["quickshell", "ipc", "call", "powerMenu", "toggle"]
+  }
+
+  BarPopup {
+    id: statusPopup
+    barWindow: bar
   }
 
   SystemClock {
@@ -162,13 +168,18 @@ PanelWindow {
     outlineColor: bar.outline
 
     StatusPill {
+      id: fullClockPill
       text: bar.clockText()
       foreground: bar.textColor
       surfaceColor: bar.transparent
       hoverColor: "#44585b70"
       fontFamily: bar.fontFamily
       interactive: true
-      onClicked: bar.longClock = !bar.longClock
+      acceptedButtons: Qt.LeftButton | Qt.RightButton
+      onClicked: mouse => {
+        if (mouse.button === Qt.RightButton) bar.longClock = !bar.longClock;
+        else statusPopup.toggle("calendar", fullClockPill);
+      }
     }
   }
 
@@ -197,6 +208,9 @@ PanelWindow {
     }
 
     StatusPill {
+      id: cpuPill
+      interactive: true
+      onClicked: statusPopup.toggle("cpu", cpuPill)
       text: bar.cpuText
       foreground: bar.textColor
       surfaceColor: "#3345475a"
@@ -204,6 +218,9 @@ PanelWindow {
     }
 
     StatusPill {
+      id: ramPill
+      interactive: true
+      onClicked: statusPopup.toggle("ram", ramPill)
       text: bar.memoryText
       foreground: bar.textColor
       surfaceColor: "#3345475a"
@@ -215,6 +232,16 @@ PanelWindow {
       foreground: bar.mutedText
       surfaceColor: "#3345475a"
       fontFamily: bar.fontFamily
+    }
+
+    StatusPill {
+      id: audioPill
+      text: AudioState.sinkReady ? (AudioState.sinkMuted ? "󰝟 " : "󰕾 ") + Math.round(AudioState.sinkVolume * 100) + "%" : "󰝟 —"
+      foreground: AudioState.sinkMuted ? bar.dimText : bar.textColor
+      surfaceColor: "#33323845"
+      fontFamily: bar.fontFamily
+      interactive: true
+      onClicked: statusPopup.toggle("audio", audioPill)
     }
 
     RowLayout {

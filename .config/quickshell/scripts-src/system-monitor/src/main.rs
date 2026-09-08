@@ -5,6 +5,35 @@ use std::path::PathBuf;
 use std::thread;
 use std::time::Duration;
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn memory_excludes_available_pages_and_converts_kib_to_bytes() {
+        assert_eq!(
+            parse_memory("MemTotal: 8192 kB\nMemFree: 512 kB\nMemAvailable: 2048 kB\n"),
+            (6291456, 8388608)
+        );
+    }
+
+    #[test]
+    fn memory_handles_missing_invalid_and_inconsistent_samples() {
+        for sample in [
+            "",
+            "MemTotal: nope kB\nMemAvailable: 2 kB",
+            "MemTotal: 0 kB\nMemAvailable: 2 kB",
+            "MemTotal: 1024 kB",
+        ] {
+            assert_eq!(parse_memory(sample), (0, 0));
+        }
+        assert_eq!(
+            parse_memory("MemTotal: 1024 kB\nMemAvailable: 2048 kB"),
+            (0, 1048576)
+        );
+    }
+}
+
 const DEFAULT_INTERVAL_SECONDS: f64 = 2.0;
 
 #[derive(Clone, Copy)]
@@ -65,30 +94,24 @@ fn cpu_usage(previous: Option<CpuSample>, current: Option<CpuSample>) -> f64 {
     (100.0 * (total_delta - idle_delta) as f64 / total_delta as f64).clamp(0.0, 100.0)
 }
 
-fn ram_usage() -> f64 {
-    let Ok(meminfo) = fs::read_to_string("/proc/meminfo") else {
-        return 0.0;
-    };
-
+// /proc/meminfo uses KiB; publish bytes alongside the percentage.
+fn parse_memory(meminfo: &str) -> (u64, u64) {
     let mut total = None;
     let mut available = None;
-
     for line in meminfo.lines() {
         let mut fields = line.split_whitespace();
         match fields.next() {
-            Some("MemTotal:") => total = fields.next().and_then(|value| value.parse::<f64>().ok()),
-            Some("MemAvailable:") => {
-                available = fields.next().and_then(|value| value.parse::<f64>().ok())
-            }
+            Some("MemTotal:") => total = fields.next().and_then(|v| v.parse::<u64>().ok()),
+            Some("MemAvailable:") => available = fields.next().and_then(|v| v.parse::<u64>().ok()),
             _ => {}
         }
     }
-
     match (total, available) {
-        (Some(total), Some(available)) if total > 0.0 => {
-            (100.0 * (1.0 - available / total)).clamp(0.0, 100.0)
-        }
-        _ => 0.0,
+        (Some(total), Some(available)) if total > 0 => (
+            total.saturating_sub(available).saturating_mul(1024),
+            total.saturating_mul(1024),
+        ),
+        _ => (0, 0),
     }
 }
 
@@ -156,14 +179,20 @@ fn main() -> io::Result<()> {
 
         let current_cpu = read_cpu_sample();
         let cpu = cpu_usage(previous_cpu, current_cpu);
-        let ram = ram_usage();
+        let (ram_used, ram_total) =
+            parse_memory(&fs::read_to_string("/proc/meminfo").unwrap_or_default());
+        let ram = if ram_total > 0 {
+            100.0 * ram_used as f64 / ram_total as f64
+        } else {
+            0.0
+        };
         let temp = max_temperature(&temperature_paths);
 
         previous_cpu = current_cpu.or(previous_cpu);
 
         writeln!(
             output,
-            "{{\"cpu\":{cpu:.1},\"ram\":{ram:.1},\"temp\":{temp:.1}}}"
+            "{{\"cpu\":{cpu:.1},\"ram\":{ram:.1},\"temp\":{temp:.1},\"ramUsed\":{ram_used},\"ramTotal\":{ram_total}}}"
         )?;
         output.flush()?;
     }

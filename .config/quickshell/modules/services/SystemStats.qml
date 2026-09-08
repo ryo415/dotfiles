@@ -10,6 +10,9 @@ Singleton {
   readonly property real cpuUsage: internalCpuUsage
   readonly property real ramUsage: internalRamUsage
   readonly property real temp: internalTemp
+  property real ramUsed: 0
+  property real ramTotal: 0
+  property var cpuHistory: []
 
   property real internalCpuUsage: 0.0
   property real internalRamUsage: 0.0
@@ -43,6 +46,9 @@ Singleton {
           root.internalCpuUsage = Math.max(0.0, Math.min(1.0, cpu / 100.0));
           root.internalRamUsage = Math.max(0.0, Math.min(1.0, ram / 100.0));
           root.internalTemp = temperature;
+          root.ramUsed = Number(stats.ramUsed) || 0;
+          root.ramTotal = Number(stats.ramTotal) || 0;
+          root.cpuHistory = root.cpuHistory.concat([root.internalCpuUsage]).slice(-60);
         } catch (error) {
           console.warn("SystemStats: failed to parse monitor output:", error, data);
         }
