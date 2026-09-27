@@ -6,6 +6,7 @@ ruby = "latest"
 rust = "latest"
 
 [settings]
+auto_env = true
 dotfiles.root = "~/dotfiles"
 dotfiles.default_mode = "symlink"
 

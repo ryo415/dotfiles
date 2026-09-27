@@ -1,0 +1,3 @@
+[bootstrap.packages]
+"pacman:git" = "latest"
+"pacman:zellij" = "latest"
