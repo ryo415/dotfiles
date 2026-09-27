@@ -33,8 +33,28 @@ hl.bind(vars.main_mod .. " + SHIFT + " .. down, hl.dsp.window.move({ direction =
 hl.bind(vars.main_mod .. " + SHIFT + SPACE", hl.dsp.window.float({ action = "toggle" }))
 
 -- WINDOW RESIZE
-hl.bind(vars.main_mod .. " + CTRL + " .. left, hl.dsp.window.resize({ x = -resizeStep, y = 0, relative = true}))
-hl.bind(vars.main_mod .. " + CTRL + " .. right, hl.dsp.window.resize({ x = resizeStep, y = 0, relative = true }))
+-- Temporary workaround for scrolling resize being clamped at the screen edge:
+-- https://github.com/hyprwm/Hyprland/discussions/15186
+-- Once fixed upstream, remove this helper and restore direct window.resize binds
+-- for H/L with x = -resizeStep / resizeStep, y = 0, relative = true.
+local function resizeHorizontal(direction)
+    return function()
+        local window = hl.get_active_window()
+        if not window then
+            return
+        end
+
+        local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+        if workspace and workspace.tiled_layout == "scrolling" and not window.floating then
+            hl.dispatch(hl.dsp.layout(direction < 0 and "colresize -0.05" or "colresize +0.05"))
+        else
+            hl.dispatch(hl.dsp.window.resize({ x = direction * resizeStep, y = 0, relative = true }))
+        end
+    end
+end
+
+hl.bind(vars.main_mod .. " + CTRL + " .. left, resizeHorizontal(-1))
+hl.bind(vars.main_mod .. " + CTRL + " .. right, resizeHorizontal(1))
 hl.bind(vars.main_mod .. " + CTRL + " .. up, hl.dsp.window.resize({ x = 0, y = resizeStep, relative = true }))
 hl.bind(vars.main_mod .. " + CTRL + " .. down, hl.dsp.window.resize({ x = 0, y = -resizeStep, relative = true }))
 hl.bind(vars.main_mod .. " + SHIFT + F", hl.dsp.window.fullscreen({ action = "toggle" }))
@@ -72,6 +92,19 @@ hl.bind(vars.main_mod .. " + D", hl.dsp.focus({ workspace = "name:dashboard" }))
 
 hl.bind(vars.main_mod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(vars.main_mod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+
+-- Toggle only the active workspace's layout, including special workspaces.
+hl.bind(vars.main_mod .. " + CTRL + S", function()
+    local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+    if not workspace then
+        return
+    end
+
+    hl.workspace_rule({
+        workspace = tostring(workspace.special and workspace.name or workspace.id),
+        layout = workspace.tiled_layout == "scrolling" and "dwindle" or "scrolling",
+    })
+end)
 
 hl.bind(vars.main_mod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(vars.main_mod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
