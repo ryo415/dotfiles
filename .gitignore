@@ -1,2 +1,3 @@
 opt/
 /.config/nvim/lazy-lock.json
+.superpowers/
