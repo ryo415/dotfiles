@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import QtQuick
 
 Scope {
@@ -6,6 +7,19 @@ Scope {
 
   readonly property var fallbackScreen: Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
   readonly property bool configuredMainConnected: hasScreenNamed(BarConfig.mainMonitorName)
+
+  // Layout changes do not always trigger a workspace refresh in Quickshell.
+  // Share one refresh timer across all monitors, including special workspaces.
+  Timer {
+    interval: 500
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: {
+      Hyprland.refreshMonitors();
+      Hyprland.refreshWorkspaces();
+    }
+  }
 
   function hasScreenNamed(name) {
     for (const screen of Quickshell.screens) {

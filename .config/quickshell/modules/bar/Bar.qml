@@ -20,6 +20,15 @@ PanelWindow {
   readonly property string fontFamily: Theme.fontFamily
   readonly property var currentMonitor: Hyprland.monitorFor(screen)
   readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name, Quickshell.screens.length === 1)
+  readonly property var layoutWorkspace: {
+    if (!currentMonitor) return null;
+    const special = currentMonitor.lastIpcObject.specialWorkspace;
+    if (special && special.id !== 0) {
+      return workspaceForId(special.id);
+    }
+    return currentMonitor.activeWorkspace;
+  }
+  readonly property string layoutName: layoutWorkspace ? (layoutWorkspace.lastIpcObject.tiledLayout || "") : ""
 
   // Muted blue-gray surfaces with a restrained Material You lavender accent.
   readonly property color transparent: Theme.transparent
@@ -154,15 +163,25 @@ PanelWindow {
     }
   }
 
-  BarIsland {
+  StatusPill {
+    id: layoutPill
+
+    anchors.left: workspaceIsland.right
+    anchors.leftMargin: 6
+    anchors.verticalCenter: workspaceIsland.verticalCenter
+    text: bar.layoutName ? bar.layoutName.charAt(0).toUpperCase() + bar.layoutName.slice(1) : "—"
+    foreground: bar.layoutName === "scrolling" ? bar.accent : bar.mutedText
+    surfaceColor: bar.surface
+    fontFamily: bar.fontFamily
+  }
+
+  ClockTab {
     id: clockIsland
 
+    visible: !bar.miniMode
     anchors.top: parent.top
-    anchors.topMargin: miniMode ? 4 : 6
-    anchors.horizontalCenter: miniMode ? undefined : parent.horizontalCenter
-    anchors.right: miniMode ? parent.right : undefined
-    anchors.rightMargin: miniMode ? 8 : 0
-    islandHeight: bar.islandHeight
+    anchors.horizontalCenter: parent.horizontalCenter
+    tabHeight: bar.panelHeight - 2
     horizontalPadding: 12
     surfaceColor: bar.surface
     outlineColor: bar.outline
@@ -172,13 +191,42 @@ PanelWindow {
       text: bar.clockText()
       foreground: bar.textColor
       surfaceColor: bar.transparent
-      hoverColor: "#44585b70"
+      hoverColor: "#663e4656"
       fontFamily: bar.fontFamily
       interactive: true
       acceptedButtons: Qt.LeftButton | Qt.RightButton
       onClicked: mouse => {
         if (mouse.button === Qt.RightButton) bar.longClock = !bar.longClock;
         else statusPopup.toggle("calendar", fullClockPill);
+      }
+    }
+  }
+
+  BarIsland {
+    id: miniClockIsland
+
+    visible: bar.miniMode
+    anchors.top: parent.top
+    anchors.topMargin: 4
+    anchors.right: parent.right
+    anchors.rightMargin: 8
+    islandHeight: bar.islandHeight
+    horizontalPadding: 12
+    surfaceColor: bar.surface
+    outlineColor: bar.outline
+
+    StatusPill {
+      id: miniClockPill
+      text: bar.clockText()
+      foreground: bar.textColor
+      surfaceColor: bar.transparent
+      hoverColor: "#663e4656"
+      fontFamily: bar.fontFamily
+      interactive: true
+      acceptedButtons: Qt.LeftButton | Qt.RightButton
+      onClicked: mouse => {
+        if (mouse.button === Qt.RightButton) bar.longClock = !bar.longClock;
+        else statusPopup.toggle("calendar", miniClockPill);
       }
     }
   }
@@ -200,8 +248,8 @@ PanelWindow {
     StatusPill {
       text: bar.networkText()
       foreground: bar.mutedText
-      surfaceColor: "#3345475a"
-      hoverColor: "#66585b70"
+      surfaceColor: "#33323845"
+      hoverColor: "#663e4656"
       fontFamily: bar.fontFamily
       interactive: true
       onClicked: bar.showIpv6 = !bar.showIpv6
@@ -213,7 +261,7 @@ PanelWindow {
       onClicked: statusPopup.toggle("cpu", cpuPill)
       text: bar.cpuText
       foreground: bar.textColor
-      surfaceColor: "#3345475a"
+      surfaceColor: "#33323845"
       fontFamily: bar.fontFamily
     }
 
@@ -223,14 +271,14 @@ PanelWindow {
       onClicked: statusPopup.toggle("ram", ramPill)
       text: bar.memoryText
       foreground: bar.textColor
-      surfaceColor: "#3345475a"
+      surfaceColor: "#33323845"
       fontFamily: bar.fontFamily
     }
 
     StatusPill {
       text: bar.temperatureText
       foreground: bar.mutedText
-      surfaceColor: "#3345475a"
+      surfaceColor: "#33323845"
       fontFamily: bar.fontFamily
     }
 
@@ -311,7 +359,7 @@ PanelWindow {
       Layout.preferredHeight: 28
       Layout.alignment: Qt.AlignVCenter
       radius: 14
-      color: hovered ? "#66585b70" : bar.transparent
+      color: hovered ? "#663e4656" : bar.transparent
 
       Text {
         anchors.centerIn: parent
