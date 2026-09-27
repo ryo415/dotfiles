@@ -44,6 +44,7 @@ function main() {
     ln -s "$HOME/dotfiles/.config/nvim" "$HOME/.config/nvim"
     ln -s "$HOME/dotfiles/.config/hypr" "$HOME/.config/hypr"
     ln -s "$HOME/dotfiles/.config/waybar" "$HOME/.config/waybar"
+    ln -s "$HOME/dotfiles/.config/quickshell" "$HOME/.config/quickshell"
   fi
   if [[ "$update" = true ]];then
     unlink $HOME/.vimrc
@@ -53,6 +54,7 @@ function main() {
     unlink "$HOME/.config/nvim"
     unlink "$HOME/.config/hypr"
     unlink "$HOME/.config/waybar"
+    unlink "$HOME/.config/quickshell"
     ln -s $HOME/dotfiles/.vimrc $HOME/.vimrc
     ln -s $HOME/dotfiles/.zprofile $HOME/.zprofile
     ln -s $HOME/dotfiles/.tmux.conf $HOME/.tmux.conf
@@ -61,6 +63,7 @@ function main() {
     ln -s "$HOME/dotfiles/.config/nvim" "$HOME/.config/nvim"
     ln -s "$HOME/dotfiles/.config/hypr" "$HOME/.config/hypr"
     ln -s "$HOME/dotfiles/.config/waybar" "$HOME/.config/waybar"
+    ln -s "$HOME/dotfiles/.config/quickshell" "$HOME/.config/quickshell"
   fi
 }
 
