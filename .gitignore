@@ -1,3 +1,4 @@
 opt/
 /.config/nvim/lazy-lock.json
 .superpowers/
+/skills/codex/.system/
