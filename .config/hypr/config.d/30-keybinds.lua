@@ -68,6 +68,8 @@ for i = 1, 10 do
     hl.bind(vars.main_mod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
+hl.bind(vars.main_mod .. " + D", hl.dsp.focus({ workspace = "name:dashboard" }))
+
 hl.bind(vars.main_mod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(vars.main_mod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 

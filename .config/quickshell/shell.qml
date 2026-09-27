@@ -3,6 +3,7 @@ import "modules/notifications"
 import "modules/power"
 import "modules/services"
 import "modules/bar"
+import "modules/dashboard"
 
 
 ShellRoot {
@@ -11,4 +12,5 @@ ShellRoot {
   Bars {}
   NotificationOverlay {}
   PowerMenu {}
+  DashboardWindow {}
 }

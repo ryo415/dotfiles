@@ -1,6 +1,23 @@
 # Quickshell Desktop Modules
 
-現在はマルチモニターBar、通知デーモン、右上の通知ポップアップ、Power Menuを起動します。
+現在はマルチモニターBar、通知デーモン、右上の通知ポップアップ、Power Menu、Dashboardを起動します。
+
+## Dashboard
+
+`Super+D` で Hyprland の named workspace `dashboard` を開きます。通常の workspace 1〜10 はそのまま使えます。Dashboard は workspace 1〜5 側の DP-5 に配置され、背景を透過した Quickshell の通常 window 1枚に時計、天気、システム、GPU、ネットワーク、ストレージ、サービス、今日の予定欄を表示します。Card の背景色は維持します。予定欄のデータソースは未接続で、現在は `No events` を表示します。
+
+天気は [Open-Meteo](https://open-meteo.com/en/docs) を使用します。Quickshell を起動する環境へ `DASHBOARD_LATITUDE` と `DASHBOARD_LONGITUDE` を設定してください。APIキーは不要です。位置が未設定、または取得に失敗した場合は天気欄に `Unavailable` を表示します。systemd user service で起動している場合は、例えば `~/.config/environment.d/dashboard.conf` に次を設定し、ユーザーセッションを再起動してください。
+
+```ini
+DASHBOARD_LATITUDE=35.68
+DASHBOARD_LONGITUDE=139.69
+```
+
+上記の座標は設定例です。自分の地域の座標に置き換えてください。
+
+`modules/services/DashboardData.qml` が `scripts/dashboard-data.py` を周期実行します。Python 3 標準ライブラリを使用し、GPU 取得には既存の NVIDIA ドライバーに含まれる `nvidia-smi` を使用します。GPU がない場合は `N/A` になります。ストレージは `/` と `/mnt` 直下のローカルファイルシステムから最大4件を表示します。ネットワークはデフォルト経路の interface の送受信バイト差分から Mbps を計算します。NAS はポーリング遅延を避けるため現在表示しません。
+
+Dashboard を表示している間の取得間隔: 時計 1秒、CPU/RAM/CPU温度 2秒（既存 `SystemStats`）、ネットワーク 1秒、GPU 2秒、ストレージ/uptime 60秒、Docker/ネットワーク状態 20秒、天気 20分。Dashboard を離れると追加データの polling は停止します。将来の予定や TODO は `modules/dashboard/DashboardWindow.qml` の `TODAY / CALENDAR` Card にデータソースを追加できます。
 
 ## Power Menu
 

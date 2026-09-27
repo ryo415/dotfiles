@@ -1,0 +1,10 @@
+# dotfiles TODOs
+
+機能ごとに見出しを追加し、完了した項目はチェックする。
+
+## Quickshell Dashboard
+
+- [ ] `TODAY / CALENDAR` に今日の予定のデータソースを接続する。
+- [ ] Dashboard に TODO のデータソースと表示欄を追加する。
+- [ ] NAS の状態を安全かつ低負荷で判定できる場合、Services に追加する。
+- [ ] 天気を使う端末では `DASHBOARD_LATITUDE` / `DASHBOARD_LONGITUDE` を設定する。

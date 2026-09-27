@@ -17,23 +17,23 @@ PanelWindow {
 
   readonly property int islandHeight: miniMode ? 30 : 34
   readonly property int panelHeight: miniMode ? 38 : 44
-  readonly property string fontFamily: "FiraCode Nerd Font Mono"
+  readonly property string fontFamily: Theme.fontFamily
   readonly property var currentMonitor: Hyprland.monitorFor(screen)
   readonly property var monitorWorkspaceIds: currentMonitor === null ? [] : BarConfig.workspaceIdsFor(currentMonitor.name, Quickshell.screens.length === 1)
 
-  // Catppuccin Mocha surfaces with a restrained Material You lavender accent.
-  readonly property color transparent: "#00000000"
-  readonly property color surface: "#ef1e1e2e"
-  readonly property color surfaceVariant: "#45475a"
-  readonly property color surfaceHover: "#585b70"
-  readonly property color outline: "#66585b70"
-  readonly property color accent: "#b4befe"
-  readonly property color activeText: "#1e1e2e"
-  readonly property color textColor: "#cdd6f4"
-  readonly property color mutedText: "#a6adc8"
-  readonly property color dimText: "#7f849c"
-  readonly property color warning: "#f9e2af"
-  readonly property color powerColor: "#f2cdcd"
+  // Muted blue-gray surfaces with a restrained Material You lavender accent.
+  readonly property color transparent: Theme.transparent
+  readonly property color surface: Theme.surface
+  readonly property color surfaceVariant: Theme.surfaceVariant
+  readonly property color surfaceHover: Theme.surfaceHover
+  readonly property color outline: Theme.outline
+  readonly property color accent: Theme.accent
+  readonly property color activeText: Theme.activeText
+  readonly property color textColor: Theme.textColor
+  readonly property color mutedText: Theme.mutedText
+  readonly property color dimText: Theme.dimText
+  readonly property color warning: Theme.warning
+  readonly property color powerColor: Theme.powerColor
 
   readonly property string cpuText: "CPU " + Math.round(SystemStats.cpuUsage * 100) + "%"
   readonly property string memoryText: "RAM " + Math.round(SystemStats.ramUsage * 100) + "%"

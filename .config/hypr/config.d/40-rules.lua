@@ -28,6 +28,14 @@ hl.window_rule({
     float = true,
 })
 
+hl.window_rule({
+    name = "dashboard-workspace",
+    match = { initial_title = "^Quickshell Dashboard$" },
+    workspace = "name:dashboard silent",
+    tile = true,
+    border_size = 0,
+})
+
 ----------------
 -- XWAYLAND   --
 ----------------

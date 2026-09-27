@@ -44,3 +44,11 @@ for i = 6, 10 do
         default = i == 6,
     })
 end
+
+hl.workspace_rule({
+    workspace = "name:dashboard",
+    monitor = "DP-5",
+    gaps_in = 0,
+    gaps_out = 0,
+    no_border = true,
+})
